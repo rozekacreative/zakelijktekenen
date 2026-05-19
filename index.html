@@ -498,19 +498,24 @@ function actieveCanvas() { return huidigeModus === 'natekenen' ? nCanvas : canva
 function resizeCanvas() {
   // Hoofd canvas
   const wrap = document.getElementById('canvas-wrap');
-  const snapH = canvas.toDataURL();
-  canvas.width = wrap.clientWidth || 1;
-  canvas.height = wrap.clientHeight || 1;
-  if (snapH !== 'data:,') { const i = new Image(); i.onload = () => ctx.drawImage(i, 0, 0); i.src = snapH; }
+  // Controleer of de map zichtbaar is voordat we iets doen
+  if (wrap.clientWidth > 0) { 
+    const snapH = canvas.toDataURL();
+    canvas.width = wrap.clientWidth;
+    canvas.height = wrap.clientHeight;
+    if (snapH !== 'data:,') { const i = new Image(); i.onload = () => ctx.drawImage(i, 0, 0); i.src = snapH; }
+  }
 
   // Natekenen canvas
   const nWrap = document.getElementById('natekenen-canvas-wrap');
-  const snapN = nCanvas.toDataURL();
-  nCanvas.width = nWrap.clientWidth || 1;
-  nCanvas.height = nWrap.clientHeight || 1;
-  if (snapN !== 'data:,') { const i = new Image(); i.onload = () => nCtx.drawImage(i, 0, 0); i.src = snapN; }
+  // Zelfde controle voor het natekenen-canvas
+  if (nWrap.clientWidth > 0) {
+    const snapN = nCanvas.toDataURL();
+    nCanvas.width = nWrap.clientWidth;
+    nCanvas.height = nWrap.clientHeight;
+    if (snapN !== 'data:,') { const i = new Image(); i.onload = () => nCtx.drawImage(i, 0, 0); i.src = snapN; }
+  }
 }
-
 window.addEventListener('resize', resizeCanvas);
 setTimeout(resizeCanvas, 50);
 
