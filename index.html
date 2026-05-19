@@ -634,12 +634,11 @@ function setMode(mode, btn) {
     voorbeeldZichtbaar = false;
   }
 
-  if (mode === 'natekenen') {
-    setTimeout(() => {
-      resizeCanvas();
-      toonNatekeen();
-    }, 30);
-  }
+  // Zorg dat het canvas ALTIJD schaalt bij een wissel, ongeacht de modus
+  setTimeout(() => {
+    resizeCanvas();
+    if (mode === 'natekenen') toonNatekeen();
+  }, 30);
 }
 
 // ── Init ────────────────────────────────────────────────────
