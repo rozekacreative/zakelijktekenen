@@ -125,7 +125,6 @@
     flex: 1; display: flex; overflow: hidden;
   }
 
-  /* Landscape: naast elkaar */
   #natekenen-voorbeeld {
     width: 50%; flex-shrink: 0;
     background: var(--light);
@@ -161,7 +160,6 @@
     width: 3000px; height: 3000px; cursor: crosshair;
   }
 
-  /* Portrait: boven / onder */
   @media (max-aspect-ratio: 1/1) {
     #natekenen-inhoud { flex-direction: column; }
     #natekenen-voorbeeld {
@@ -239,7 +237,6 @@
 </div>
 
 <div id="toolbar">
-  <!-- De rest van de toolbar code blijft gelijk -->
   <div class="tool-group">
     <button class="tool-btn active" id="stift-btn" onclick="setTool('stift')" title="Stift">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
@@ -265,13 +262,35 @@
 </div>
 
 <script>
-// ... (De rest van je script blijft identiek)
-// (Zorg dat je in de script sectie bij setMode ook even controleert 
-// of de 'huidigeModus' default op 'vrij' staat als je dat wilt)
-// Ik heb hierboven de setMode aanroep in de HTML aangepast.
+const opdrachten = [
+{ woord: "Advies" }, { woord: "Afdeling" }, { woord: "Afhankelijkheid" }, { woord: "Ambitie" }, { woord: "Balans" },
+{ woord: "Bellen" }, { woord: "Bereikbaar" }, { woord: "Beslissing" }, { woord: "Beweging" }, { woord: "Bottleneck" },
+{ woord: "Budget" }, { woord: "Capaciteit" }, { woord: "Coaching" }, { woord: "Communicatie" }, { woord: "Commitment" },
+{ woord: "Complex" }, { woord: "Concurrentie" }, { woord: "Conflict" }, { woord: "Consultant" }, { woord: "Contract" },
+{ woord: "Cultuur" }, { woord: "Cyclus" }, { woord: "Deadline" }, { woord: "Dilemma" }, { woord: "Diversiteit" },
+{ woord: "Doel" }, { woord: "Domein" }, { woord: "Draagvlak" }, { woord: "Effect" }, { woord: "Efficiëntie" },
+{ woord: "Eigenaar" }, { woord: "Energie" }, { woord: "Feedback" }, { woord: "Flexibel" }, { woord: "Gesprekken" },
+{ woord: "Groei" }, { woord: "Helpen" }, { woord: "Hulpvraag" }, { woord: "Idee" }, { woord: "Implementeren" },
+{ woord: "Impact" }, { woord: "Innovatie" }, { woord: "Inspiratie" }, { woord: "Integer" }, { woord: "Inzicht" },
+{ woord: "Juridisch" }, { woord: "Klacht" }, { woord: "Klant" }, { woord: "Klantgericht" }, { woord: "Kwaliteit" },
+{ woord: "Laagdrempelig" }, { woord: "Leiderschap" }, { woord: "Leren" }, { woord: "Luisteren" }, { woord: "Markt" },
+{ woord: "Melding" }, { woord: "Mindset" }, { woord: "Missie" }, { woord: "Motivatie" }, { woord: "Nederland" },
+{ woord: "Netwerk" }, { woord: "Onderzoek" }, { woord: "Ontwikkeling" }, { woord: "Ontzorgen" }, { woord: "Oordeel-loos" },
+{ woord: "Organiseren" }, { woord: "Overbelast" }, { woord: "Overleg" }, { woord: "Overzicht" }, { woord: "Participatie" },
+{ woord: "Passie" }, { woord: "Plan" }, { woord: "Presentatie" }, { woord: "Preventie" }, { woord: "Prioriteit" },
+{ woord: "Prioriteren" }, { woord: "Probleem" }, { woord: "Proces" }, { woord: "Reflectie" }, { woord: "Regie" },
+{ woord: "Reorganisatie" }, { woord: "Resultaat" }, { woord: "Risico" }, { woord: "Samenwerking" }, { woord: "Schaalbaarheid" },
+{ woord: "Silo's" }, { woord: "Spanningsveld" }, { woord: "Stakeholders" }, { woord: "Strategie" }, { woord: "Stress" },
+{ woord: "Structuur" }, { woord: "Succes" }, { woord: "Talent" }, { woord: "Team" }, { woord: "Teamdynamiek" },
+{ woord: "Tijdlijn" }, { woord: "Toezicht" }, { woord: "Trainer" }, { woord: "Transitie" }, { woord: "Uitval" },
+{ woord: "Urgentie" }, { woord: "Vacature" }, { woord: "Verandering" }, { woord: "Verbinding" }, { woord: "Vertrouwen" },
+{ woord: "Visie" }, { woord: "Waarde" }, { woord: "Weerstand" }, { woord: "Werkdruk" }, { woord: "Zelfvertrouwen" }
+];
 
-const opdrachten = [ /* ... lijst ... */ ];
-const natekeenAfbeeldingen = [ /* ... lijst ... */ ];
+const natekeenAfbeeldingen = [];
+for (let i = 1; i <= 51; i++) {
+    natekeenAfbeeldingen.push({ bestand: `voorbeeld-${i.toString().padStart(2, '0')}.jpg`, label: "Teken mee" });
+}
 
 function shuffle(arr) {
   const a = [...arr];
@@ -331,7 +350,7 @@ const nCanvas = document.getElementById('natekenen-canvas');
 const nCtx = nCanvas.getContext('2d');
 nCanvas.width = 3000; nCanvas.height = 3000;
 
-let huidigeModus = 'vrij'; // Nu default op vrij
+let huidigeModus = 'vrij';
 let tekening = false;
 let tool = 'stift';
 let penGrootte = 4;
