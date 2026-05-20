@@ -83,20 +83,6 @@
     cursor: pointer; white-space: nowrap; flex-shrink: 0;
   }
 
-  /* ── HINT PANEL (opdracht modus) ── */
-  #voorbeeld-panel {
-    background: white;
-    border-bottom: 2px solid var(--soft);
-    padding: 8px 16px;
-    display: none; flex-shrink: 0;
-  }
-  #voorbeeld-panel.zichtbaar { display: block; }
-  #voorbeeld-panel p {
-    font-size: 0.65rem; color: var(--soft);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;
-  }
-  #voorbeeld-svg { width: 100%; max-height: 95px; display: block; }
-
   /* ── CANVAS (opdracht + vrij) ── */
   #canvas-wrap {
     flex: 1; position: relative; overflow: hidden;
@@ -108,7 +94,7 @@
   }
   #tekencanvas {
     position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%; cursor: crosshair;
+    width: 3000px; height: 3000px; cursor: crosshair;
   }
 
   /* ── NATEKENEN MODUS ── */
@@ -172,7 +158,7 @@
   }
   #natekenen-canvas {
     position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%; cursor: crosshair;
+    width: 3000px; height: 3000px; cursor: crosshair;
   }
 
   /* Portrait: boven / onder */
@@ -203,31 +189,12 @@
   .tool-btn.active { background: var(--accent); border-color: var(--accent); }
   .tool-btn:active { transform: scale(0.92); }
 
-  .size-btn {
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.3);
-    background: transparent; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; flex-shrink: 0;
-  }
-  .size-btn.active { border-color: var(--accent); background: rgba(232,84,26,0.2); }
-  .size-dot { background: white; border-radius: 50%; }
-
   .color-swatch {
     width: 26px; height: 26px; border-radius: 50%;
     border: 2px solid rgba(255,255,255,0.2);
     cursor: pointer; transition: transform 0.15s; flex-shrink: 0;
   }
   .color-swatch.active { border-color: white; transform: scale(1.15); }
-
-  #wis-btn {
-    background: rgba(255,255,255,0.08);
-    border: 1.5px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.8); padding: 6px 10px;
-    border-radius: 8px; font-size: 0.68rem;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer; white-space: nowrap; flex-shrink: 0;
-  }
 </style>
 </head>
 <body>
@@ -241,25 +208,16 @@
   </div>
 </header>
 
-<!-- OPDRACHT BANNER -->
 <div id="opdracht-banner">
   <span id="opdracht-label">Teken nu:</span>
   <span id="opdracht-tekst">Idee</span>
   <button class="nav-btn" onclick="volgendOpdracht()">Volgende →</button>
 </div>
 
-<!-- HINT PANEL -->
-<div id="voorbeeld-panel">
-  <p>Voorbeeld</p>
-  <svg id="voorbeeld-svg" viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg"></svg>
-</div>
-
-<!-- CANVAS (opdracht + vrij) -->
 <div id="canvas-wrap">
   <canvas id="tekencanvas"></canvas>
 </div>
 
-<!-- NATEKENEN -->
 <div id="natekenen-wrap">
   <div id="natekenen-banner">
     <span id="natekenen-label">Natekenen:</span>
@@ -280,27 +238,19 @@
   </div>
 </div>
 
-<!-- TOOLBAR -->
 <div id="toolbar">
   <div class="tool-group">
     <button class="tool-btn active" id="stift-btn" onclick="setTool('stift')" title="Stift">
-      <!-- Stift SVG icoon -->
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-      </svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
     </button>
-    <button class="tool-btn" id="gum-btn" onclick="setTool('gum')" title="Gum">🧹</button>
-  </div>
-  <div class="divider"></div>
-  <div class="tool-group">
-    <button class="size-btn active" id="s-klein" onclick="setSize(3, 's-klein')">
-      <div class="size-dot" style="width:5px;height:5px"></div>
+    <button class="tool-btn" id="gum-btn" onclick="setTool('gum')" title="Gum">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 16.5l9-9a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8l-9 9a2 2 0 0 1-2.8 0l-4.2-4.2a2 2 0 0 1 0-2.8z"/><path d="M22 22H11"/><path d="M7 12l5 5"/></svg>
     </button>
-    <button class="size-btn" id="s-midden" onclick="setSize(6, 's-midden')">
-      <div class="size-dot" style="width:9px;height:9px"></div>
+    <button class="tool-btn" onclick="undo()" title="Stap terug">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
     </button>
-    <button class="size-btn" id="s-groot" onclick="setSize(13, 's-groot')">
-      <div class="size-dot" style="width:14px;height:14px"></div>
+    <button class="tool-btn" onclick="wisActiefCanvas()" title="Wis alles">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
     </button>
   </div>
   <div class="divider"></div>
@@ -311,77 +261,30 @@
     <div class="color-swatch" style="background:#1d4e89" onclick="setKleur('#1d4e89', this)"></div>
     <div class="color-swatch" style="background:#b5b5b5" onclick="setKleur('#b5b5b5', this)"></div>
   </div>
-  <div class="divider"></div>
-  <button id="wis-btn" onclick="wisActiefCanvas()">🗑 Wis</button>
-  <button class="tool-btn" onclick="toggleVoorbeeld()" title="Hint" id="hint-btn" style="margin-left:auto">👁</button>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  OPDRACHTEN — voeg hier zelf woorden toe of pas ze aan!
-//  Formaat: { woord: "Jouw woord", svg: () => `...SVG inhoud...` }
-//  Je kunt de svg() weglaten als je geen hint wil tonen.
-//  SVG viewBox is 300x90. Kleuren: #1a1a2e (donker), #e8541a (oranje),
-//  #2d6a4f (groen), #1d4e89 (blauw), #b5b5b5 (grijs)
+//  OPDRACHTEN (Schoon en zonder SVG code)
 // ═══════════════════════════════════════════════════════════════
 const opdrachten = [
-  { woord: "Idee", svg: () => `<path d="M90,15 Q90,5 100,5 Q110,5 110,15 Q116,28 120,35 L80,35 Q84,28 90,15Z" fill="none" stroke="#e8541a" stroke-width="2.5" stroke-linejoin="round"/><rect x="85" y="35" width="30" height="7" rx="2" fill="none" stroke="#e8541a" stroke-width="2"/><rect x="88" y="42" width="24" height="6" rx="2" fill="none" stroke="#e8541a" stroke-width="2"/><text x="138" y="32" font-family="Caveat" font-size="14" fill="#1a1a2e">Idee!</text>` },
-  { woord: "Verandering", svg: () => `<path d="M30,65 Q80,20 140,50 Q185,72 245,22" fill="none" stroke="#1d4e89" stroke-width="3" stroke-linecap="round"/><polygon points="238,12 252,24 238,32" fill="#1d4e89"/><circle cx="30" cy="65" r="5" fill="#1d4e89"/>` },
-  { woord: "Samenwerking", svg: () => `<circle cx="65" cy="18" r="9" fill="none" stroke="#1a1a2e" stroke-width="2.2"/><line x1="65" y1="27" x2="65" y2="55" stroke="#1a1a2e" stroke-width="2.2"/><line x1="65" y1="36" x2="50" y2="47" stroke="#1a1a2e" stroke-width="2.2"/><line x1="65" y1="36" x2="80" y2="47" stroke="#1a1a2e" stroke-width="2.2"/><line x1="65" y1="55" x2="55" y2="73" stroke="#1a1a2e" stroke-width="2.2"/><line x1="65" y1="55" x2="75" y2="73" stroke="#1a1a2e" stroke-width="2.2"/><circle cx="120" cy="18" r="9" fill="none" stroke="#2d6a4f" stroke-width="2.2"/><line x1="120" y1="27" x2="120" y2="55" stroke="#2d6a4f" stroke-width="2.2"/><line x1="120" y1="36" x2="105" y2="47" stroke="#2d6a4f" stroke-width="2.2"/><line x1="120" y1="36" x2="135" y2="47" stroke="#2d6a4f" stroke-width="2.2"/><line x1="120" y1="55" x2="110" y2="73" stroke="#2d6a4f" stroke-width="2.2"/><line x1="120" y1="55" x2="130" y2="73" stroke="#2d6a4f" stroke-width="2.2"/><line x1="80" y1="40" x2="105" y2="40" stroke="#e8541a" stroke-width="2" stroke-dasharray="4,3"/>` },
-  { woord: "Groei", svg: () => `<line x1="25" y1="78" x2="25" y2="12" stroke="#1a1a2e" stroke-width="2.5"/><line x1="25" y1="78" x2="210" y2="78" stroke="#1a1a2e" stroke-width="2.5"/><polyline points="40,72 75,58 110,44 145,30 180,16" fill="none" stroke="#2d6a4f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polygon points="174,8 190,16 174,24" fill="#2d6a4f"/>` },
-  { woord: "Complex", svg: () => `<circle cx="80" cy="45" r="28" fill="none" stroke="#1a1a2e" stroke-width="2"/><circle cx="80" cy="45" r="16" fill="none" stroke="#1a1a2e" stroke-width="1.5" stroke-dasharray="4,3"/><circle cx="80" cy="45" r="5" fill="#e8541a"/><line x1="80" y1="17" x2="80" y2="29" stroke="#1a1a2e" stroke-width="1.5"/><line x1="80" y1="61" x2="80" y2="73" stroke="#1a1a2e" stroke-width="1.5"/><line x1="52" y1="45" x2="64" y2="45" stroke="#1a1a2e" stroke-width="1.5"/><line x1="96" y1="45" x2="108" y2="45" stroke="#1a1a2e" stroke-width="1.5"/>` },
-  { woord: "Beslissing", svg: () => `<polygon points="120,10 155,45 120,80 85,45" fill="none" stroke="#1a1a2e" stroke-width="2.5"/><text x="105" y="50" font-family="Caveat" font-size="12" fill="#1a1a2e">Ja/Nee</text><line x1="155" y1="45" x2="195" y2="25" stroke="#2d6a4f" stroke-width="2"/><text x="198" y="22" font-family="Caveat" font-size="12" fill="#2d6a4f">Ja</text><line x1="155" y1="45" x2="195" y2="65" stroke="#e8541a" stroke-width="2"/><text x="198" y="68" font-family="Caveat" font-size="12" fill="#e8541a">Nee</text>` },
-  { woord: "Probleem", svg: () => `<polygon points="120,8 148,60 92,60" fill="none" stroke="#e8541a" stroke-width="2.5" stroke-linejoin="round"/><line x1="120" y1="25" x2="120" y2="46" stroke="#e8541a" stroke-width="2.5" stroke-linecap="round"/><circle cx="120" cy="53" r="2.5" fill="#e8541a"/>` },
-  { woord: "Communicatie", svg: () => `<rect x="20" y="15" width="90" height="45" rx="8" fill="none" stroke="#1a1a2e" stroke-width="2.2"/><line x1="35" y1="30" x2="95" y2="30" stroke="#b5b5b5" stroke-width="1.5"/><line x1="35" y1="40" x2="85" y2="40" stroke="#b5b5b5" stroke-width="1.5"/><polygon points="30,60 50,60 30,72" fill="#1a1a2e"/><rect x="150" y="30" width="90" height="45" rx="8" fill="none" stroke="#1d4e89" stroke-width="2.2"/><polygon points="230,75 210,75 230,87" fill="#1d4e89"/><line x1="110" y1="38" x2="150" y2="38" stroke="#e8541a" stroke-width="2" stroke-dasharray="5,4"/><polygon points="145,32 158,38 145,44" fill="#e8541a"/>` },
-  { woord: "Doel", svg: () => `<circle cx="100" cy="45" r="35" fill="none" stroke="#1a1a2e" stroke-width="2"/><circle cx="100" cy="45" r="22" fill="none" stroke="#1a1a2e" stroke-width="1.5"/><circle cx="100" cy="45" r="10" fill="none" stroke="#e8541a" stroke-width="2"/><circle cx="100" cy="45" r="3" fill="#e8541a"/>` },
-  { woord: "Proces", svg: () => `<rect x="10" y="35" width="50" height="25" rx="4" fill="none" stroke="#1a1a2e" stroke-width="2"/><text x="22" y="51" font-family="Caveat" font-size="12" fill="#1a1a2e">Start</text><polygon points="60,41 72,47 60,53" fill="#1a1a2e"/><rect x="88" y="35" width="50" height="25" rx="4" fill="none" stroke="#1d4e89" stroke-width="2"/><text x="100" y="51" font-family="Caveat" font-size="12" fill="#1d4e89">Stap</text><polygon points="138,41 150,47 138,53" fill="#1a1a2e"/><rect x="166" y="35" width="50" height="25" rx="4" fill="none" stroke="#2d6a4f" stroke-width="2"/><text x="175" y="51" font-family="Caveat" font-size="12" fill="#2d6a4f">Klaar</text>` },
-  { woord: "Energie" },
-  { woord: "Weerstand", svg: () => `<line x1="20" y1="45" x2="100" y2="45" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/><polygon points="95,38 108,45 95,52" fill="#1a1a2e"/><line x1="112" y1="30" x2="132" y2="60" stroke="#e8541a" stroke-width="3" stroke-linecap="round"/><line x1="132" y1="30" x2="112" y2="60" stroke="#e8541a" stroke-width="3" stroke-linecap="round"/>` },
-  { woord: "Strategie", svg: () => `<rect x="15" y="10" width="230" height="70" rx="5" fill="none" stroke="#1a1a2e" stroke-width="2"/><line x1="95" y1="10" x2="95" y2="80" stroke="#1a1a2e" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="165" y1="10" x2="165" y2="80" stroke="#1a1a2e" stroke-width="1.5" stroke-dasharray="4,3"/><text x="38" y="50" font-family="Caveat" font-size="13" fill="#1a1a2e">Nu</text><text x="112" y="50" font-family="Caveat" font-size="13" fill="#1d4e89">Plan</text><text x="182" y="50" font-family="Caveat" font-size="13" fill="#2d6a4f">Doel</text>` },
-  { woord: "Feedback", svg: () => `<circle cx="70" cy="45" r="30" fill="none" stroke="#1a1a2e" stroke-width="2"/><line x1="70" y1="28" x2="70" y2="48" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/><circle cx="70" cy="55" r="2.5" fill="#1a1a2e"/><path d="M100,45 Q130,30 130,55 Q130,70 100,62" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-dasharray="5,3"/><polygon points="97,56 104,64 112,57" fill="#2d6a4f"/>` },
-  { woord: "Risico", svg: () => `<line x1="30" y1="78" x2="220" y2="78" stroke="#1a1a2e" stroke-width="2"/><rect x="30" y="58" width="25" height="20" fill="#2d6a4f" opacity="0.7"/><rect x="70" y="43" width="25" height="35" fill="#1d4e89" opacity="0.7"/><rect x="110" y="28" width="25" height="50" fill="#e8541a" opacity="0.8"/><rect x="150" y="13" width="25" height="65" fill="#e8541a" opacity="0.5"/>` },
-  { woord: "Tijdlijn", svg: () => `<line x1="15" y1="50" x2="265" y2="50" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="50" r="7" fill="#1a1a2e"/><circle cx="110" cy="50" r="7" fill="#1a1a2e"/><circle cx="170" cy="50" r="7" fill="#1a1a2e"/><circle cx="230" cy="50" r="7" fill="#e8541a"/><text x="36" y="36" font-family="Caveat" font-size="11" fill="#1a1a2e">Start</text><text x="216" y="36" font-family="Caveat" font-size="11" fill="#e8541a">Doel</text>` },
-  { woord: "Prioriteit", svg: () => `<rect x="20" y="12" width="16" height="16" rx="2" fill="none" stroke="#e8541a" stroke-width="2.2"/><polyline points="23,20 27,25 36,14" fill="none" stroke="#e8541a" stroke-width="2.2"/><text x="44" y="24" font-family="Caveat" font-size="13" fill="#e8541a">Urgent + Belangrijk</text><rect x="20" y="38" width="16" height="16" rx="2" fill="none" stroke="#1d4e89" stroke-width="2"/><polyline points="23,46 27,51 36,40" fill="none" stroke="#1d4e89" stroke-width="2"/><text x="44" y="50" font-family="Caveat" font-size="13" fill="#1d4e89">Belangrijk</text><rect x="20" y="64" width="16" height="16" rx="2" fill="none" stroke="#b5b5b5" stroke-width="2"/><text x="44" y="76" font-family="Caveat" font-size="13" fill="#b5b5b5">Later</text>` },
-  { woord: "Innovatie" },
-  { woord: "Overzicht", svg: () => `<rect x="10" y="10" width="240" height="70" rx="6" fill="none" stroke="#1a1a2e" stroke-width="2"/><rect x="22" y="22" width="60" height="46" rx="4" fill="none" stroke="#1d4e89" stroke-width="1.8"/><rect x="95" y="22" width="60" height="46" rx="4" fill="none" stroke="#2d6a4f" stroke-width="1.8"/><rect x="168" y="22" width="60" height="46" rx="4" fill="none" stroke="#e8541a" stroke-width="1.8"/>` },
-  { woord: "Verbinding", svg: () => `<circle cx="40" cy="45" r="14" fill="none" stroke="#1a1a2e" stroke-width="2.2"/><circle cx="120" cy="20" r="14" fill="none" stroke="#1d4e89" stroke-width="2.2"/><circle cx="200" cy="45" r="14" fill="none" stroke="#2d6a4f" stroke-width="2.2"/><circle cx="120" cy="70" r="14" fill="none" stroke="#e8541a" stroke-width="2.2"/><line x1="54" y1="40" x2="106" y2="26" stroke="#b5b5b5" stroke-width="1.5"/><line x1="54" y1="50" x2="106" y2="64" stroke="#b5b5b5" stroke-width="1.5"/><line x1="134" y1="26" x2="186" y2="40" stroke="#b5b5b5" stroke-width="1.5"/><line x1="134" y1="64" x2="186" y2="50" stroke="#b5b5b5" stroke-width="1.5"/>` },
-  { woord: "Leiderschap" },
-  { woord: "Vertrouwen" },
-  { woord: "Ambitie" },
-  { woord: "Deadline" },
-  { woord: "Budget" },
-  { woord: "Klant" },
-  { woord: "Markt" },
-  { woord: "Afdeling" },
-  { woord: "Kwaliteit" },
-  { woord: "Efficiëntie" },
-  { woord: "Silo's" },
-  { woord: "Draagvlak" },
-  { woord: "Transitie" },
-  { woord: "Inzicht" },
-  { woord: "Bottleneck" },
-  { woord: "Cyclus" },
-  { woord: "Netwerk" },
-  { woord: "Blokkade" },
-  { woord: "Impact" },
-  { woord: "Spanningsveld" },
-  { woord: "Dilemma" },
-  { woord: "Cultuur" },
-  { woord: "Structuur" },
-  { woord: "Schaalbaarheid" },
-  { woord: "Afhankelijkheid" },
-  { woord: "Commitment" },
-  { woord: "Urgentie" },
-  // ─── Voeg hier zelf opdrachten toe ───────────────────────────
-  // { woord: "Jouw woord" },
-  // { woord: "Nog een woord" },
-  // ─────────────────────────────────────────────────────────────
+  { woord: "Idee" }, { woord: "Verandering" }, { woord: "Samenwerking" }, { woord: "Groei" },
+  { woord: "Complex" }, { woord: "Beslissing" }, { woord: "Probleem" }, { woord: "Communicatie" },
+  { woord: "Doel" }, { woord: "Proces" }, { woord: "Energie" }, { woord: "Weerstand" },
+  { woord: "Strategie" }, { woord: "Feedback" }, { woord: "Risico" }, { woord: "Tijdlijn" },
+  { woord: "Prioriteit" }, { woord: "Innovatie" }, { woord: "Overzicht" }, { woord: "Verbinding" },
+  { woord: "Leiderschap" }, { woord: "Vertrouwen" }, { woord: "Ambitie" }, { woord: "Deadline" },
+  { woord: "Budget" }, { woord: "Klant" }, { woord: "Markt" }, { woord: "Concurrentie" },
+  { woord: "Kwaliteit" }, { woord: "Efficiëntie" }, { woord: "Silo's" }, { woord: "Draagvlak" },
+  { woord: "Transitie" }, { woord: "Inzicht" }, { woord: "Bottleneck" }, { woord: "Cyclus" },
+  { woord: "Netwerk" }, { woord: "Visie" }, { woord: "Missie" }, { woord: "Waarde" },
+  { woord: "Impact" }, { woord: "Teamdynamiek" }, { woord: "Spanningsveld" }, { woord: "Dilemma" },
+  { woord: "Cultuur" }, { woord: "Structuur" }, { woord: "Schaalbaarheid" }, { woord: "Afhankelijkheid" },
+  { woord: "Commitment" }, { woord: "Urgentie" }
 ];
 
 // ═══════════════════════════════════════════════════════════════
 //  NATEKENEN — voeg hier je afbeeldingsbestanden toe
-//  Zet de afbeeldingen in dezelfde map als dit HTML-bestand.
-//  Formaat: { bestand: "bestandsnaam.jpg", label: "Omschrijving" }
 // ═══════════════════════════════════════════════════════════════
 const natekeenAfbeeldingen = [
   { bestand: "voorbeeld-01.jpg", label: "Teken mee" },
@@ -394,252 +297,49 @@ const natekeenAfbeeldingen = [
   { bestand: "voorbeeld-08.jpg", label: "Teken mee" },
   { bestand: "voorbeeld-09.jpg", label: "Teken mee" },
   { bestand: "voorbeeld-10.jpg", label: "Teken mee" },
-  // ─── Voeg hier zelf afbeeldingen toe ─────────────────────────
-  // { bestand: "voorbeeld-21.jpg", label: "Omschrijving" },
-  // ─────────────────────────────────────────────────────────────
+  { bestand: "voorbeeld-11.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-12.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-13.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-14.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-15.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-16.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-17.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-18.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-19.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-20.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-21.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-22.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-23.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-24.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-25.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-26.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-27.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-28.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-29.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-30.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-31.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-32.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-33.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-34.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-35.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-36.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-37.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-38.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-39.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-40.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-41.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-42.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-43.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-44.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-45.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-46.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-47.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-48.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-49.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-50.jpg", label: "Teken mee" }
+  { bestand: "voorbeeld-51.jpg", label: "Teken mee" }
 ];
 
-// ── Random shuffle hulpfunctie ──────────────────────────────
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// ── Opdrachten (random) ─────────────────────────────────────
-let opdrachtWachtrij = shuffle(opdrachten);
-let opdrachtIndex = 0;
-let voorbeeldZichtbaar = false;
-
-function huidigOpdracht() { return opdrachtWachtrij[opdrachtIndex]; }
-
-function volgendOpdracht() {
-  opdrachtIndex = (opdrachtIndex + 1) % opdrachtWachtrij.length;
-  if (opdrachtIndex === 0) opdrachtWachtrij = shuffle(opdrachten);
-  toonOpdracht();
-  wisActiefCanvas();
-  if (voorbeeldZichtbaar) toonHint();
-}
-
-function toonOpdracht() {
-  document.getElementById('opdracht-tekst').textContent = huidigOpdracht().woord;
-}
-
-function toggleVoorbeeld() {
-  voorbeeldZichtbaar = !voorbeeldZichtbaar;
-  document.getElementById('voorbeeld-panel').classList.toggle('zichtbaar', voorbeeldZichtbaar);
-  if (voorbeeldZichtbaar) toonHint();
-}
-
-function toonHint() {
-  const o = huidigOpdracht();
-  const svg = document.getElementById('voorbeeld-svg');
-  svg.innerHTML = o.svg ? o.svg() : `<text x="10" y="50" font-family="Caveat" font-size="16" fill="#b5b5b5">Geen hint beschikbaar voor "${o.woord}"</text>`;
-}
-
-// ── Natekenen (random) ──────────────────────────────────────
-let natekeenWachtrij = shuffle(natekeenAfbeeldingen);
-let natekeenIndex = 0;
-
-function huidigNatekeen() { return natekeenWachtrij[natekeenIndex]; }
-
-function volgendNatekenen() {
-  natekeenIndex = (natekeenIndex + 1) % natekeenWachtrij.length;
-  if (natekeenIndex === 0) natekeenWachtrij = shuffle(natekeenAfbeeldingen);
-  toonNatekeen();
-  wisNatekeenCanvas();
-}
-
-function toonNatekeen() {
-  const v = huidigNatekeen();
-  document.getElementById('natekenen-naam').textContent = v.label;
-  const img = document.getElementById('natekenen-img');
-  const placeholder = document.getElementById('natekenen-placeholder');
-  img.style.display = 'none';
-  if (placeholder) placeholder.style.display = 'flex';
-
-  const test = new Image();
-  test.onload = () => {
-    img.src = v.bestand;
-    img.style.display = 'block';
-    if (placeholder) placeholder.style.display = 'none';
-  };
-  test.onerror = () => {
-    img.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'flex';
-  };
-  test.src = v.bestand;
-}
-
-// ── Canvas: opdracht + vrij ─────────────────────────────────
-const canvas = document.getElementById('tekencanvas');
-const ctx = canvas.getContext('2d');
-
-// ── Canvas: natekenen ───────────────────────────────────────
-const nCanvas = document.getElementById('natekenen-canvas');
-const nCtx = nCanvas.getContext('2d');
-
-let huidigeModus = 'opdracht'; // 'opdracht' | 'vrij' | 'natekenen'
-let tekening = false;
-let tool = 'stift';
-let penGrootte = 3;
-let penKleur = '#1a1a2e';
-let laatste = { x: 0, y: 0 };
-
-function actieveCtx() { return huidigeModus === 'natekenen' ? nCtx : ctx; }
-function actieveCanvas() { return huidigeModus === 'natekenen' ? nCanvas : canvas; }
-
-function resizeCanvas() {
-  // Hoofd canvas
-  const wrap = document.getElementById('canvas-wrap');
-  // Controleer of de map zichtbaar is voordat we iets doen
-  if (wrap.clientWidth > 0) { 
-    const snapH = canvas.toDataURL();
-    canvas.width = wrap.clientWidth;
-    canvas.height = wrap.clientHeight;
-    if (snapH !== 'data:,') { const i = new Image(); i.onload = () => ctx.drawImage(i, 0, 0); i.src = snapH; }
-  }
-
-  // Natekenen canvas
-  const nWrap = document.getElementById('natekenen-canvas-wrap');
-  // Zelfde controle voor het natekenen-canvas
-  if (nWrap.clientWidth > 0) {
-    const snapN = nCanvas.toDataURL();
-    nCanvas.width = nWrap.clientWidth;
-    nCanvas.height = nWrap.clientHeight;
-    if (snapN !== 'data:,') { const i = new Image(); i.onload = () => nCtx.drawImage(i, 0, 0); i.src = snapN; }
-  }
-}
-window.addEventListener('resize', resizeCanvas);
-setTimeout(resizeCanvas, 50);
-
-function getPos(e, cvs) {
-  const rect = cvs.getBoundingClientRect();
-  const src = e.touches ? e.touches[0] : e;
-  return { x: src.clientX - rect.left, y: src.clientY - rect.top };
-}
-
-function startTekenen(e) {
-  e.preventDefault();
-  tekening = true;
-  laatste = getPos(e, actieveCanvas());
-  const c = actieveCtx();
-  c.beginPath();
-  c.moveTo(laatste.x, laatste.y);
-}
-
-function teken(e) {
-  e.preventDefault();
-  if (!tekening) return;
-  const pos = getPos(e, actieveCanvas());
-  const c = actieveCtx();
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-
-  if (tool === 'gum') {
-    c.globalCompositeOperation = 'destination-out';
-    c.lineWidth = penGrootte * 5;
-    c.globalAlpha = 1;
-    c.strokeStyle = 'rgba(0,0,0,1)';
-  } else {
-    c.globalCompositeOperation = 'source-over';
-    c.globalAlpha = 1;
-    c.lineWidth = penGrootte;
-    c.strokeStyle = penKleur;
-  }
-
-  c.lineTo(pos.x, pos.y);
-  c.stroke();
-  c.beginPath();
-  c.moveTo(pos.x, pos.y);
-  laatste = pos;
-}
-
-function stopTekenen() {
-  if (!tekening) return;
-  tekening = false;
-  const c = actieveCtx();
-  c.globalAlpha = 1;
-  c.globalCompositeOperation = 'source-over';
-}
-
-function bindCanvas(cvs) {
-  cvs.addEventListener('mousedown', startTekenen);
-  cvs.addEventListener('mousemove', teken);
-  cvs.addEventListener('mouseup', stopTekenen);
-  cvs.addEventListener('mouseleave', stopTekenen);
-  cvs.addEventListener('touchstart', startTekenen, { passive: false });
-  cvs.addEventListener('touchmove', teken, { passive: false });
-  cvs.addEventListener('touchend', stopTekenen);
-}
-
-bindCanvas(canvas);
-bindCanvas(nCanvas);
-
-// ── Tools ───────────────────────────────────────────────────
-function setTool(t) {
-  tool = t;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(t + '-btn')?.classList.add('active');
-}
-
-function setSize(g, id) {
-  penGrootte = g;
-  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
-}
-
-function setKleur(k, el) {
-  penKleur = k;
-  document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  if (tool === 'gum') setTool('stift');
-}
-
-function wisActiefCanvas() {
-  const c = actieveCtx();
-  const cv = actieveCanvas();
-  c.clearRect(0, 0, cv.width, cv.height);
-}
-
-function wisNatekeenCanvas() {
-  nCtx.clearRect(0, 0, nCanvas.width, nCanvas.height);
-}
-
-// ── Modus ───────────────────────────────────────────────────
-function setMode(mode, btn) {
-  huidigeModus = mode;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  const banner = document.getElementById('opdracht-banner');
-  const canvasWrap = document.getElementById('canvas-wrap');
-  const natekeenWrap = document.getElementById('natekenen-wrap');
-  const voorbeeldPanel = document.getElementById('voorbeeld-panel');
-  const hintBtn = document.getElementById('hint-btn');
-
-  banner.style.display = mode === 'opdracht' ? 'flex' : 'none';
-  canvasWrap.style.display = mode === 'natekenen' ? 'none' : '';
-  natekeenWrap.classList.toggle('actief', mode === 'natekenen');
-  hintBtn.style.display = mode === 'opdracht' ? 'flex' : 'none';
-
-  if (mode !== 'opdracht') {
-    voorbeeldPanel.classList.remove('zichtbaar');
-    voorbeeldZichtbaar = false;
-  }
-
-  // Zorg dat het canvas ALTIJD schaalt bij een wissel, ongeacht de modus
-  setTimeout(() => {
-    resizeCanvas();
-    if (mode === 'natekenen') toonNatekeen();
-  }, 30);
-}
-
-// ── Init ────────────────────────────────────────────────────
-toonOpdracht();
-</script>
-</body>
-</html>
