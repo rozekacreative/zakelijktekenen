@@ -75,3 +75,438 @@
     font-size: 1.7rem; font-weight: 700;
     color: var(--ink); flex: 1; line-height: 1.2;
   }
+  .nav-btn {
+    background: var(--ink); color: var(--paper);
+    border: none; padding: 7px 13px;
+    border-radius: 20px; font-size: 0.7rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ── CANVAS (opdracht + vrij) ── */
+  #canvas-wrap {
+    flex: 1; position: relative; overflow: hidden;
+    background: white;
+    background-image:
+      linear-gradient(rgba(180,170,150,0.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180,170,150,0.13) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  #tekencanvas {
+    position: absolute; top: 0; left: 0;
+    width: 3000px; height: 3000px; cursor: crosshair;
+  }
+
+  /* ── NATEKENEN MODUS ── */
+  #natekenen-wrap {
+    display: none; flex: 1; overflow: hidden;
+  }
+  #natekenen-wrap.actief { display: flex; flex-direction: column; }
+
+  #natekenen-banner {
+    background: var(--light);
+    border-bottom: 2.5px solid var(--soft);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  #natekenen-label {
+    font-size: 0.6rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--accent); white-space: nowrap;
+  }
+  #natekenen-naam {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--ink); flex: 1;
+  }
+
+  #natekenen-inhoud {
+    flex: 1; display: flex; overflow: hidden;
+  }
+
+  /* Landscape: naast elkaar */
+  #natekenen-voorbeeld {
+    width: 50%; flex-shrink: 0;
+    background: var(--light);
+    display: flex; align-items: center; justify-content: center;
+    border-right: 2px solid var(--soft);
+    padding: 8px; overflow: hidden;
+  }
+  #natekenen-voorbeeld img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain; border-radius: 6px;
+  }
+  .natekenen-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; opacity: 0.5;
+  }
+  .natekenen-placeholder span { font-size: 2.5rem; }
+  .natekenen-placeholder small {
+    font-size: 0.7rem; font-family: 'DM Sans', sans-serif;
+    color: var(--soft); text-align: center;
+  }
+
+  #natekenen-canvas-wrap {
+    flex: 1; position: relative; overflow: hidden;
+    background: white;
+    background-image:
+      linear-gradient(rgba(180,170,150,0.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180,170,150,0.13) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  #natekenen-canvas {
+    position: absolute; top: 0; left: 0;
+    width: 3000px; height: 3000px; cursor: crosshair;
+  }
+
+  /* Portrait: boven / onder */
+  @media (max-aspect-ratio: 1/1) {
+    #natekenen-inhoud { flex-direction: column; }
+    #natekenen-voorbeeld {
+      width: 100%; height: 42%;
+      border-right: none; border-bottom: 2px solid var(--soft);
+    }
+  }
+
+  /* ── TOOLBAR ── */
+  #toolbar {
+    background: var(--ink); padding: 9px 12px;
+    display: flex; align-items: center;
+    gap: 7px; overflow-x: auto; flex-shrink: 0;
+  }
+  .tool-group { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+  .divider { width: 1px; height: 28px; background: rgba(255,255,255,0.18); flex-shrink: 0; }
+
+  .tool-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: transparent; color: white; font-size: 1.05rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .tool-btn.active { background: var(--accent); border-color: var(--accent); }
+  .tool-btn:active { transform: scale(0.92); }
+
+  .color-swatch {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    cursor: pointer; transition: transform 0.15s; flex-shrink: 0;
+  }
+  .color-swatch.active { border-color: white; transform: scale(1.15); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✏️ Zakelijk Tekenen</h1>
+  <div class="mode-tabs">
+    <button class="tab-btn active" onclick="setMode('opdracht', this)">Opdracht</button>
+    <button class="tab-btn" onclick="setMode('vrij', this)">Vrij</button>
+    <button class="tab-btn" onclick="setMode('natekenen', this)">Natekenen</button>
+  </div>
+</header>
+
+<div id="opdracht-banner">
+  <span id="opdracht-label">Teken nu:</span>
+  <span id="opdracht-tekst">Idee</span>
+  <button class="nav-btn" onclick="volgendOpdracht()">Volgende →</button>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="tekencanvas"></canvas>
+</div>
+
+<div id="natekenen-wrap">
+  <div id="natekenen-banner">
+    <span id="natekenen-label">Natekenen:</span>
+    <span id="natekenen-naam">—</span>
+    <button class="nav-btn" onclick="volgendNatekenen()">Volgende →</button>
+  </div>
+  <div id="natekenen-inhoud">
+    <div id="natekenen-voorbeeld">
+      <div class="natekenen-placeholder" id="natekenen-placeholder">
+        <span>🖼️</span>
+        <small>Voeg afbeeldingen toe<br>met naam voorbeeld-01.jpg etc.</small>
+      </div>
+      <img id="natekenen-img" src="" alt="" style="display:none">
+    </div>
+    <div id="natekenen-canvas-wrap">
+      <canvas id="natekenen-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<div id="toolbar">
+  <div class="tool-group">
+    <button class="tool-btn active" id="stift-btn" onclick="setTool('stift')" title="Stift">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+    </button>
+    <button class="tool-btn" id="gum-btn" onclick="setTool('gum')" title="Gum">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 16.5l9-9a2 2 0 0 1 2.8 0l4.2 4.2a2 2 0 0 1 0 2.8l-9 9a2 2 0 0 1-2.8 0l-4.2-4.2a2 2 0 0 1 0-2.8z"/><path d="M22 22H11"/><path d="M7 12l5 5"/></svg>
+    </button>
+    <button class="tool-btn" onclick="undo()" title="Stap terug">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+    </button>
+    <button class="tool-btn" onclick="wisActiefCanvas()" title="Wis alles">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    </button>
+  </div>
+  <div class="divider"></div>
+  <div class="tool-group">
+    <div class="color-swatch active" style="background:#1a1a2e" onclick="setKleur('#1a1a2e', this)"></div>
+    <div class="color-swatch" style="background:#e8541a" onclick="setKleur('#e8541a', this)"></div>
+    <div class="color-swatch" style="background:#2d6a4f" onclick="setKleur('#2d6a4f', this)"></div>
+    <div class="color-swatch" style="background:#1d4e89" onclick="setKleur('#1d4e89', this)"></div>
+    <div class="color-swatch" style="background:#b5b5b5" onclick="setKleur('#b5b5b5', this)"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  OPDRACHTEN
+// ═══════════════════════════════════════════════════════════════
+const opdrachten = [
+  { woord: "Idee" }, { woord: "Verandering" }, { woord: "Samenwerking" }, { woord: "Groei" },
+  { woord: "Complex" }, { woord: "Beslissing" }, { woord: "Probleem" }, { woord: "Communicatie" },
+  { woord: "Doel" }, { woord: "Proces" }, { woord: "Energie" }, { woord: "Weerstand" },
+  { woord: "Strategie" }, { woord: "Feedback" }, { woord: "Risico" }, { woord: "Tijdlijn" },
+  { woord: "Prioriteit" }, { woord: "Innovatie" }, { woord: "Overzicht" }, { woord: "Verbinding" },
+  { woord: "Leiderschap" }, { woord: "Vertrouwen" }, { woord: "Ambitie" }, { woord: "Deadline" },
+  { woord: "Budget" }, { woord: "Klant" }, { woord: "Markt" }, { woord: "Concurrentie" },
+  { woord: "Kwaliteit" }, { woord: "Efficiëntie" }, { woord: "Silo's" }, { woord: "Draagvlak" },
+  { woord: "Transitie" }, { woord: "Inzicht" }, { woord: "Bottleneck" }, { woord: "Cyclus" },
+  { woord: "Netwerk" }, { woord: "Visie" }, { woord: "Missie" }, { woord: "Waarde" },
+  { woord: "Impact" }, { woord: "Teamdynamiek" }, { woord: "Spanningsveld" }, { woord: "Dilemma" },
+  { woord: "Cultuur" }, { woord: "Structuur" }, { woord: "Schaalbaarheid" }, { woord: "Afhankelijkheid" },
+  { woord: "Commitment" }, { woord: "Urgentie" }
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  NATEKENEN — voeg hier je afbeeldingsbestanden toe
+// ═══════════════════════════════════════════════════════════════
+const natekeenAfbeeldingen = [
+  { bestand: "voorbeeld-01.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-02.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-03.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-04.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-05.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-06.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-07.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-08.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-09.jpg", label: "Teken mee" },
+  { bestand: "voorbeeld-10.jpg", label: "Teken mee" },
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── Opdrachten ─────────────────────────────────────
+let opdrachtWachtrij = shuffle(opdrachten);
+let opdrachtIndex = 0;
+
+function huidigOpdracht() { return opdrachtWachtrij[opdrachtIndex]; }
+
+function volgendOpdracht() {
+  opdrachtIndex = (opdrachtIndex + 1) % opdrachtWachtrij.length;
+  if (opdrachtIndex === 0) opdrachtWachtrij = shuffle(opdrachten);
+  toonOpdracht();
+  wisActiefCanvas();
+}
+
+function toonOpdracht() {
+  document.getElementById('opdracht-tekst').textContent = huidigOpdracht().woord;
+}
+
+// ── Natekenen ──────────────────────────────────────
+let natekeenWachtrij = shuffle(natekeenAfbeeldingen);
+let natekeenIndex = 0;
+
+function huidigNatekeen() { return natekeenWachtrij[natekeenIndex]; }
+
+function volgendNatekenen() {
+  natekeenIndex = (natekeenIndex + 1) % natekeenWachtrij.length;
+  if (natekeenIndex === 0) natekeenWachtrij = shuffle(natekeenAfbeeldingen);
+  toonNatekeen();
+  wisNatekeenCanvas();
+}
+
+function toonNatekeen() {
+  const v = huidigNatekeen();
+  document.getElementById('natekenen-naam').textContent = v.label;
+  const img = document.getElementById('natekenen-img');
+  const placeholder = document.getElementById('natekenen-placeholder');
+  img.style.display = 'none';
+  if (placeholder) placeholder.style.display = 'flex';
+
+  const test = new Image();
+  test.onload = () => {
+    img.src = v.bestand;
+    img.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+  };
+  test.onerror = () => {
+    img.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+  };
+  test.src = v.bestand;
+}
+
+// ── Canvas Setup ──────────────────────────────────────────
+const canvas = document.getElementById('tekencanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 3000; canvas.height = 3000;
+
+const nCanvas = document.getElementById('natekenen-canvas');
+const nCtx = nCanvas.getContext('2d');
+nCanvas.width = 3000; nCanvas.height = 3000;
+
+let huidigeModus = 'opdracht';
+let tekening = false;
+let tool = 'stift';
+let penGrootte = 4; // Vaste maat, lekker strak
+let penKleur = '#1a1a2e';
+let laatste = { x: 0, y: 0 };
+
+function actieveCtx() { return huidigeModus === 'natekenen' ? nCtx : ctx; }
+function actieveCanvas() { return huidigeModus === 'natekenen' ? nCanvas : canvas; }
+
+// ── Undo Systeem ──────────────────────────────────────────
+let undoGeheugen = { ctx: null, pixels: null };
+
+function slaStaatOp() {
+  undoGeheugen.ctx = actieveCtx();
+  // Kopiëren van pixeldata is bliksemsnel en crashbestendig
+  undoGeheugen.pixels = undoGeheugen.ctx.getImageData(0, 0, 3000, 3000);
+}
+
+function undo() {
+  if (!undoGeheugen.pixels) return;
+  if (undoGeheugen.ctx === actieveCtx()) {
+    undoGeheugen.ctx.putImageData(undoGeheugen.pixels, 0, 0);
+    undoGeheugen.pixels = null; // Voorkom oneindig herhalen van dezelfde stap
+  }
+}
+
+// ── Teken Logica ──────────────────────────────────────────
+function getPos(e, cvs) {
+  const rect = cvs.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+}
+
+function startTekenen(e) {
+  e.preventDefault();
+  slaStaatOp(); // Sla staat op vóór de nieuwe streek
+  tekening = true;
+  laatste = getPos(e, actieveCanvas());
+  const c = actieveCtx();
+  c.beginPath();
+  c.moveTo(laatste.x, laatste.y);
+}
+
+function teken(e) {
+  e.preventDefault();
+  if (!tekening) return;
+  const pos = getPos(e, actieveCanvas());
+  const c = actieveCtx();
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+
+  if (tool === 'gum') {
+    c.globalCompositeOperation = 'destination-out';
+    c.lineWidth = penGrootte * 5; // Gum is extra breed
+    c.globalAlpha = 1;
+    c.strokeStyle = 'rgba(0,0,0,1)';
+  } else {
+    c.globalCompositeOperation = 'source-over';
+    c.globalAlpha = 1;
+    c.lineWidth = penGrootte;
+    c.strokeStyle = penKleur;
+  }
+
+  c.lineTo(pos.x, pos.y);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(pos.x, pos.y);
+  laatste = pos;
+}
+
+function stopTekenen() {
+  if (!tekening) return;
+  tekening = false;
+  const c = actieveCtx();
+  c.globalAlpha = 1;
+  c.globalCompositeOperation = 'source-over';
+}
+
+function bindCanvas(cvs) {
+  cvs.addEventListener('mousedown', startTekenen);
+  cvs.addEventListener('mousemove', teken);
+  cvs.addEventListener('mouseup', stopTekenen);
+  cvs.addEventListener('mouseleave', stopTekenen);
+  cvs.addEventListener('touchstart', startTekenen, { passive: false });
+  cvs.addEventListener('touchmove', teken, { passive: false });
+  cvs.addEventListener('touchend', stopTekenen);
+}
+
+bindCanvas(canvas);
+bindCanvas(nCanvas);
+
+// ── Tools ───────────────────────────────────────────────────
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(t + '-btn')?.classList.add('active');
+}
+
+function setKleur(k, el) {
+  penKleur = k;
+  document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (tool === 'gum') setTool('stift');
+}
+
+function wisActiefCanvas() {
+  slaStaatOp(); // Opslaan voor je alles weggooit
+  const c = actieveCtx();
+  c.clearRect(0, 0, 3000, 3000);
+}
+
+function wisNatekeenCanvas() {
+  nCtx.clearRect(0, 0, 3000, 3000);
+}
+
+// ── Modus Wissel ────────────────────────────────────────────
+function setMode(mode, btn) {
+  huidigeModus = mode;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const banner = document.getElementById('opdracht-banner');
+  const canvasWrap = document.getElementById('canvas-wrap');
+  const natekeenWrap = document.getElementById('natekenen-wrap');
+
+  banner.style.display = mode === 'opdracht' ? 'flex' : 'none';
+  canvasWrap.style.display = mode === 'natekenen' ? 'none' : '';
+  natekeenWrap.classList.toggle('actief', mode === 'natekenen');
+
+  if (mode === 'natekenen') {
+    setTimeout(() => {
+      toonNatekeen();
+    }, 30);
+  }
+}
+
+// ── Init ────────────────────────────────────────────────────
+toonOpdracht();
+</script>
+</body>
+</html>
